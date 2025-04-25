@@ -54,7 +54,7 @@ function Navbar() {
                   <span className="my-2 mr-5">LOG IN</span>
                 </button>
                 <button
-                  onClick={() => dispatch(openAuthModal("signup"))}
+                  onClick={() => dispatch(openAuthModal("register"))}
                   className="flex items-center justify-center bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 transition-colors px-6 py-2 rounded-full text-white text-medium font-bold"
                 >
                   <span>REGISTER</span>
@@ -109,7 +109,7 @@ function Navbar() {
                   <span className="my-2 mr-5">LOG IN</span>
                 </button>
                 <button
-                  onClick={() => dispatch(openAuthModal("signup"))}
+                  onClick={() => dispatch(openAuthModal("register"))}
                   className="flex items-center justify-center bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 transition-colors px-6 py-2 rounded-full text-white text-medium font-bold"
                 >
                   <span>REGISTER</span>

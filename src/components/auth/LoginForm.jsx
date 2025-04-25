@@ -10,7 +10,7 @@ import { setProfile } from "../../slices/profileSlice";
 
 const LoginForm = ({ setMode, onClose, setAuthData, authData }) => {
   const dispatch = useDispatch();
-  const [values, setValues] = useState({ loginId: "", password: "" });
+  const [values, setValues] = useState({ identifier: "", password: "" });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -32,13 +32,13 @@ const LoginForm = ({ setMode, onClose, setAuthData, authData }) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^\d{10}$/;
 
-    if (!values.loginId) {
-      errors.loginId = "Email or Phone is required";
+    if (!values.identifier) {
+      errors.identifier = "Email or Phone is required";
     } else if (
-      !emailRegex.test(values.loginId) &&
-      !phoneRegex.test(values.loginId)
+      !emailRegex.test(values.identifier) &&
+      !phoneRegex.test(values.identifier)
     ) {
-      errors.loginId = "Invalid Email or Phone";
+      errors.identifier = "Invalid Email or Phone";
     }
 
     if (!values.password) {
@@ -64,48 +64,35 @@ const LoginForm = ({ setMode, onClose, setAuthData, authData }) => {
 
     try {
       const body = {
-        userName: values.loginId,
+        identifier: values.identifier,
         password: values.password,
-        appType: "SERVICE-APP",
       };
 
       const response = await login(body);
       if (response) {
-        dispatch(setToken(response?.accessToken));
-        dispatch(setRefreshToken(response?.refreshToken));
-
-        let res = await getUserProfileImage(response?.accessToken);
-        if (res?.code === 200 && res?.data?.fileId) {
-          dispatch(
-            setProfile({
-              ...response?.data,
-              image: `${IMAGE_BASE_URL}${res?.data?.fileId}`,
-            })
-          );
-        } else {
-          const Image = `https://api.dicebear.com/5.x/initials/svg?seed=${
-            response?.data?.firstName + " " + response?.data?.lastName
-          }`;
-          dispatch(
-            setProfile({
-              ...response?.data,
-              image: Image,
-            })
-          );
-        }
+        dispatch(setToken(response?.token));
+        const Image = response?.user?.image
+          ? response?.user?.image
+          : `https://api.dicebear.com/5.x/initials/svg?seed=${response?.user?.fullName}`;
+        dispatch(
+          setProfile({
+            ...response?.user,
+            image: Image,
+          })
+        );
 
         onClose();
         toast.success("Welcome back! You've successfully logged in.");
       } else {
         setErrors({
-          loginId: "Invalid Credentials",
+          identifier: "Invalid Credentials",
           password: "Invalid Credentials",
         });
       }
     } catch (error) {
       console.error("Login error:", error);
       setErrors({
-        loginId: "Login failed",
+        identifier: "Login failed",
         password: "Login failed",
       });
     } finally {
@@ -118,9 +105,9 @@ const LoginForm = ({ setMode, onClose, setAuthData, authData }) => {
     const phoneRegex = /^\d{10}$/;
 
     // If a valid phone number is provided, use that
-    if (values.loginId && phoneRegex.test(values.loginId)) {
+    if (values.identifier && phoneRegex.test(values.identifier)) {
       setAuthData({
-        phoneNumber: values.loginId,
+        phoneNumber: values.identifier,
         email: "",
         flowType: "login",
       });
@@ -133,20 +120,27 @@ const LoginForm = ({ setMode, onClose, setAuthData, authData }) => {
       });
     }
 
-    // Simply navigate to the signup form
-    setMode("signup");
+    // Simply navigate to the register form
+    setMode("register");
   };
 
   const handleForgotPassword = () => {
     // Set the flow type to forgot
     setAuthData({
-      phoneNumber: values.loginId && /^\d{10}$/.test(values.loginId) ? values.loginId : "",
-      email: values.loginId && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.loginId) ? values.loginId : "",
-      flowType: "forgot"
+      phoneNumber:
+        values.identifier && /^\d{10}$/.test(values.identifier)
+          ? values.identifier
+          : "",
+      email:
+        values.identifier &&
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.identifier)
+          ? values.identifier
+          : "",
+      flowType: "forgot",
     });
-    
-    // Navigate to signup screen
-    setMode("signup");
+
+    // Navigate to register screen
+    setMode("register");
   };
 
   return (
@@ -157,9 +151,9 @@ const LoginForm = ({ setMode, onClose, setAuthData, authData }) => {
 
       <div className="space-y-4">
         <CustomInputField
-          name="loginId"
-          error={errors.loginId}
-          value={values.loginId}
+          name="identifier"
+          error={errors.identifier}
+          value={values.identifier}
           placeholder="Phone Number / Email"
           onChange={handleChange}
         />
@@ -209,9 +203,9 @@ const LoginForm = ({ setMode, onClose, setAuthData, authData }) => {
                 setAuthData({
                   phoneNumber: "",
                   email: "",
-                  flowType: "signup",
+                  flowType: "register",
                 });
-                setMode("signup");
+                setMode("register");
               }}
               className="text-primary font-semibold ml-1 hover:underline"
             >

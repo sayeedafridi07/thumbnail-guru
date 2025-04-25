@@ -18,7 +18,7 @@ const OtpVerification = ({ setMode, onClose, authData }) => {
   const [canResend, setCanResend] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isResending, setIsResending] = useState(false);
-  const flowType = authData?.flowType || "signup";
+  const flowType = authData?.flowType || "register";
 
   useEffect(() => {
     if (timeLeft <= 0) {
@@ -53,7 +53,7 @@ const OtpVerification = ({ setMode, onClose, authData }) => {
     try {
       const body = {
         mobileNo: phoneNumber,
-        type: flowType === "signup" ? "SignUp" : "Login",
+        type: flowType === "register" ? "signup" : "login",
       };
       const response = await generateOTP(body);
       if (response) {
@@ -82,46 +82,34 @@ const OtpVerification = ({ setMode, onClose, authData }) => {
     setIsSubmitting(true);
 
     try {
-      const response = await validateOTP(
-        phoneNumber,
-        otp,
-        flowType === "signup" ? true : false
-      );
+      const body = {
+        phone: phoneNumber,
+        otp: otp,
+        type: flowType === "register" ? "register" : "login",
+      };
+      const response = await validateOTP(body);
 
       if (response) {
         if (flowType === "forgot") {
           toast.success("OTP verified successfully");
-          dispatch(setToken(response?.data?.accessToken));
-          dispatch(setRefreshToken(response?.data?.refershToken));
+          dispatch(setToken(response?.token));
           // Navigate to reset password screen
           setMode("resetPassword");
-        } else if (flowType === "signup") {
+        } else if (flowType === "register") {
           toast.success("OTP verified successfully");
           setMode("registration");
         } else {
           // Login flow
-          dispatch(setToken(response?.data?.accessToken));
-          dispatch(setRefreshToken(response?.data?.refershToken));
-
-          let res = await getUserProfileImage(response?.data?.accessToken);
-          if (res?.code === 200 && res?.data?.fileId) {
-            dispatch(
-              setProfile({
-                ...response?.data,
-                image: `${IMAGE_BASE_URL}${res?.data?.fileId}`,
-              })
-            );
-          } else {
-            const Image = `https://api.dicebear.com/5.x/initials/svg?seed=${
-              response?.data?.firstName + " " + response?.data?.lastName
-            }`;
-            dispatch(
-              setProfile({
-                ...response?.data,
-                image: Image,
-              })
-            );
-          }
+          dispatch(setToken(response?.token));
+          const Image = response?.user?.image
+            ? response?.user?.image
+            : `https://api.dicebear.com/5.x/initials/svg?seed=${response?.user?.fullName}`;
+          dispatch(
+            setProfile({
+              ...response?.user,
+              image: Image,
+            })
+          );
 
           if (onClose) {
             onClose();
@@ -130,7 +118,6 @@ const OtpVerification = ({ setMode, onClose, authData }) => {
         }
       } else {
         setError(true);
-        toast.error("Invalid OTP. Please try again.");
       }
     } catch (error) {
       console.error("OTP verification error:", error);

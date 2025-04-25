@@ -23,25 +23,25 @@ export default function ProfileDropdown() {
   };
 
   // Filter menu options based on authentication status
-  // const filteredMenuOptions = menuOptions.filter(option => 
+  // const filteredMenuOptions = menuOptions.filter(option =>
   //   !option.loginRequired || (option.loginRequired && profile)
   // );
 
   return (
     <div className="relative">
-      <button 
-        onClick={() => setOpen(!open)} 
+      <button
+        onClick={() => setOpen(!open)}
         className="flex items-center gap-3 rounded-full border border-gray-200 bg-white px-3 py-2 hover:shadow-md transition-all duration-300"
       >
         <Menu className="h-5 w-5 text-gray-500" />
         <img
           src={profile?.image}
-          alt={`profile-${profile?.firstName}`}
+          alt={`profile-${profile?.fullName}`}
           className="h-8 w-8 rounded-full object-cover"
           referrerPolicy="no-referrer"
         />
       </button>
-      
+
       {open && (
         <div
           onClick={(e) => e.stopPropagation()}
@@ -49,7 +49,7 @@ export default function ProfileDropdown() {
           ref={ref}
         >
           {/* User profile section at top of dropdown - now clickable */}
-          <div 
+          <div
             className="p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors"
             onClick={() => handleMenuItemClick("/profile")}
           >
@@ -61,12 +61,14 @@ export default function ProfileDropdown() {
                 referrerPolicy="no-referrer"
               />
               <div>
-                <p className="font-medium text-base text-gray-900">{profile?.firstName} {profile?.lastName}</p>
+                <p className="font-medium text-base text-gray-900">
+                  {profile?.fullName}
+                </p>
                 <p className="text-xs text-gray-500">{profile?.email}</p>
               </div>
             </div>
           </div>
-          
+
           <div className="py-1 divide-y divide-gray-100">
             {/* {filteredMenuOptions.map((option, index) => (
               <button

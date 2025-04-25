@@ -13,7 +13,7 @@ const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
   const [authData, setAuthData] = useState({
     phoneNumber: "",
     email: "",
-    flowType: "signup",
+    flowType: "register",
   });
 
   // Always sync mode with initialMode prop when it changes
@@ -27,7 +27,7 @@ const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
       setAuthData({
         phoneNumber: "",
         email: "",
-        flowType: "signup",
+        flowType: "register",
       });
     }
   }, [isOpen]);
@@ -45,7 +45,7 @@ const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
             authData={authData}
           />
         );
-      case "signup":
+      case "register":
         return (
           <SignupForm
             setMode={setMode}

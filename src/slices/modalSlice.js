@@ -15,6 +15,7 @@ const modalSlice = createSlice({
     },
     closeAuthModal: (state) => {
       state.isAuthModalOpen = false;
+      state.initialMode = "login";
     },
   },
 });

@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { generateOTP } from "../../services/operations/authAPI";
 
 const SignupForm = ({ setMode, setAuthData, authData }) => {
-  const flowType = authData?.flowType || "signup";
+  const flowType = authData?.flowType || "register";
   const [phoneNumber, setPhoneNumber] = useState(authData?.phoneNumber || "");
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,11 +38,11 @@ const SignupForm = ({ setMode, setAuthData, authData }) => {
     const body = {
       mobileNo: phoneNumber,
       type:
-        flowType === "signup"
-          ? "SignUp"
+        flowType === "register"
+          ? "register"
           : flowType === "forgot"
-          ? "ForgotPassword"
-          : "Login",
+          ? "forgot"
+          : "login",
     };
 
     try {
@@ -118,7 +118,7 @@ const SignupForm = ({ setMode, setAuthData, authData }) => {
         </div>
 
         <div className="text-center mt-6">
-          {flowType === "signup" && (
+          {flowType === "register" && (
             <p className="text-metal font-lato text-sm font-bold">
               Already have an account?
               <button

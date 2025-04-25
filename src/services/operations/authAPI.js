@@ -45,17 +45,11 @@ export async function generateOTP(body) {
 }
 
 // VALIDATE OTP
-export async function validateOTP(phoneNumber, otp, isSignUp) {
+export async function validateOTP(body) {
   const toastId = toast.loading("Validating otp...");
   let result = null;
   try {
-    const response = await apiConnector(
-      "GET",
-      VALIDATE_OTP_API +
-        `?mobileNo=${phoneNumber}&otp=${otp}&isSignUp=${isSignUp}&appType=SERVICE-APP`,
-      null,
-      {}
-    );
+    const response = await apiConnector("POST", VALIDATE_OTP_API, body, {});
     result = response?.data;
   } catch (error) {
     console.log("error", JSON.stringify(error?.message));

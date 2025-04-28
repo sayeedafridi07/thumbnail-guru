@@ -13,7 +13,7 @@ export const getPropertyStatus = (status) => {
       };
     case 'APPROVED':
       return {
-        backgroundColor: 'bg-blue-500',
+        backgroundColor: 'bg-emerald-500',
         textColor: 'text-white',
         text: 'Activated'
       };
